@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Bell, Settings, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Bell, Settings } from 'lucide-react'
 import { BackButton } from '@/components/ui/back-button'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
 import { useNotifications } from '@/lib/notifications'
@@ -18,7 +18,6 @@ export function RequestTypePage() {
   const { user, templates, loading } = useAuth()
   const [activeGroup, setActiveGroup] = useState('')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [infoTemplate, setInfoTemplate] = useState<typeof templates[0] | null>(null)
   const currentPath = `${location.pathname}${location.search}`
 
   const groups = getTemplateGroups(templates)
@@ -146,21 +145,11 @@ export function RequestTypePage() {
             {!loading &&
               filteredTemplates.map((template) => {
                 const color = getRequestTypeColor(template.description)
-                const hasInfo = template.informationalText.trim().length > 0
-
-                const handleCardClick = () => {
-                  if (hasInfo) {
-                    setInfoTemplate(template)
-                  } else {
-                    navigate('/richieste/' + template.code.toLowerCase())
-                  }
-                }
-
                 return (
                   <button
                     key={template.code}
                     type="button"
-                    onClick={handleCardClick}
+                    onClick={() => navigate('/richieste/' + template.code.toLowerCase())}
                     className="group w-full overflow-hidden border border-[#EDEBE9] bg-white text-left transition-all duration-200 hover:border-[#009B9B] hover:shadow-md"
                   >
                     <div className="h-1.5 w-full" style={{ backgroundColor: color }} />
@@ -182,48 +171,6 @@ export function RequestTypePage() {
                 )
               })}
 
-            {/* Modal informazioni template */}
-            {infoTemplate && (
-              <div
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-                onClick={() => setInfoTemplate(null)}
-              >
-                <div
-                  className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="mb-1 flex items-start justify-between gap-3">
-                    <div>
-                      <div className="mb-1 flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-[2px]" style={{ backgroundColor: getRequestTypeColor(infoTemplate.description) }} />
-                        <h3 className="text-base font-semibold text-[#323130]">{infoTemplate.description}</h3>
-                      </div>
-                    </div>
-                    <button type="button" onClick={() => setInfoTemplate(null)} className="text-[#605E5C] hover:text-[#323130]">
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                  <p className="mt-3 text-sm leading-relaxed text-[#605E5C]">{infoTemplate.informationalText}</p>
-                  <div className="mt-6 flex justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setInfoTemplate(null)}
-                      className="rounded px-4 py-2 text-sm text-[#605E5C] hover:bg-[#F3F2F1]"
-                    >
-                      Chiudi
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setInfoTemplate(null); navigate('/richieste/' + infoTemplate.code.toLowerCase()) }}
-                      className="rounded px-4 py-2 text-sm font-medium text-white"
-                      style={{ backgroundColor: getRequestTypeColor(infoTemplate.description) }}
-                    >
-                      Seleziona
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {!loading && filteredTemplates.length === 0 && (
               <div className="rounded-xl border border-[#EDEBE9] bg-white p-4 text-sm text-[#605E5C]">
