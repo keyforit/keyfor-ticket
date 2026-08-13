@@ -144,7 +144,7 @@ export function RequestTypePage() {
 
             {!loading &&
               filteredTemplates.map((template) => {
-                const color = getRequestTypeColor(template.description)
+                const color = getRequestTypeColor(template.code)
                 return (
                   <button
                     key={template.code}

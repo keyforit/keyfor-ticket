@@ -293,7 +293,7 @@ export function SpostaDataPage() {
   const currentRequest = { label: template?.description ?? code ?? '', info: template?.informationalText ?? '' }
   const bookmarkKey = `create:${code ?? ''}`
   const [isBookmarked, setIsBookmarked] = useState(() => getBookmarked(bookmarkKey))
-  const currentRequestColor = getRequestTypeColor(currentRequest.label)
+  const currentRequestColor = getRequestTypeColor(template?.code)
   const isDetailsComplete = Boolean(
     template &&
       template.fields
