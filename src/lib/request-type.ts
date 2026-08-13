@@ -18,8 +18,9 @@ const BC_PALETTE = [
  * Restituisce un colore deterministico dalla palette BC
  * basato sull'hash della stringa `code` del template.
  * Lo stesso codice restituisce sempre lo stesso colore.
+ * Il secondo parametro `_fallback` è ignorato ma mantenuto per compatibilità.
  */
-export function getRequestTypeColor(code: string | undefined): string {
+export function getRequestTypeColor(code: string | undefined, _fallback?: string): string {
   if (!code) return BC_PALETTE[0]
   let hash = 0
   for (let i = 0; i < code.length; i++) {
