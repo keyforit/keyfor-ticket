@@ -3,7 +3,7 @@ import { ChevronLeft, Bell, Settings, ArrowUp, ArrowDown } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UserProfileMenu } from './UserProfileMenu'
 import { useNotifications } from '@/lib/notifications'
-import { clearCurrentUser, getUserInitials, useCurrentUser } from '@/lib/current-user'
+import { useAuth } from '@/context/AuthContext'
 import {
   resetTicketListCustomization,
   setTicketListColumnOrder,
@@ -21,7 +21,7 @@ export function TopNav() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
   const { visibleColumns, groupingMode, groupingYear, columnOrder } = useTicketListCustomization()
-  const currentUser = useCurrentUser()
+  const { user } = useAuth()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const currentPath = `${location.pathname}${location.search}`
   const statusParam = new URLSearchParams(location.search).get('status')
@@ -29,6 +29,11 @@ export function TopNav() {
   const hasSettings = canCustomizeTicketList
   const canUseAssigneeGrouping = statusParam === 'open' || statusParam === 'closed'
   const availableYears = getAvailableYears([])
+
+  const email = user?.username ?? ''
+  const initials = (user?.name || user?.username || '')
+    .split(/[\s@.]/).filter(Boolean).slice(0, 2)
+    .map((p: string) => p[0].toUpperCase()).join('') || '?'
 
   useEffect(() => {
     if (!canUseAssigneeGrouping && groupingMode === 'assignee') {
@@ -43,7 +48,6 @@ export function TopNav() {
   }, [availableYears, groupingYear])
 
   const handleLogout = () => {
-    clearCurrentUser()
     navigate('/login')
   }
 
@@ -95,8 +99,8 @@ export function TopNav() {
         </button>
         <UserProfileMenu
             accentColor="#009B9B"
-            email={currentUser?.email ?? ''}
-            initials={getUserInitials(currentUser)}
+            email={email}
+            initials={initials}
             onLogout={handleLogout}
           />
       </div>

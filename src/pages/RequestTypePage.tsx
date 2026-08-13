@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Bell, Settings } from 'lucide-react'
 import { BackButton } from '@/components/ui/back-button'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
 import { useNotifications } from '@/lib/notifications'
-import { clearCurrentUser, getUserInitials, useCurrentUser } from '@/lib/current-user'
+import { useAuth } from '@/context/AuthContext'
 import { handleHorizontalMouseDragScroll, handleHorizontalWheelScroll } from '@/lib/horizontal-wheel-scroll'
 
 type RequestArea = 'ordini' | 'magazzino' | 'logistica' | 'amministrazione'
@@ -173,14 +173,19 @@ export function RequestTypePage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
-  const currentUser = useCurrentUser()
+  const { user } = useAuth()
   const [activeArea, setActiveArea] = useState<RequestArea>('ordini')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const currentPath = `${location.pathname}${location.search}`
   const activeRequestTypeIds = requestTypeByArea[activeArea]
   const filteredRequestTypes = requestTypes.filter((request) => activeRequestTypeIds.includes(request.id))
+
+  const email = user?.username ?? ''
+  const initials = (user?.name || user?.username || '')
+    .split(/[\s@.]/).filter(Boolean).slice(0, 2)
+    .map((p: string) => p[0].toUpperCase()).join('') || '?'
+
   const handleLogout = () => {
-    clearCurrentUser()
     navigate('/login')
   }
 
@@ -222,8 +227,8 @@ export function RequestTypePage() {
           </button>
           <UserProfileMenu
               accentColor="#009B9B"
-              email={currentUser?.email ?? ''}
-              initials={getUserInitials(currentUser)}
+              email={email}
+              initials={initials}
               onLogout={handleLogout}
             />
         </div>

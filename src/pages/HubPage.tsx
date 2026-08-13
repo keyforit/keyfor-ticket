@@ -4,7 +4,7 @@ import { Bell, ChevronRight, Plus, Settings } from 'lucide-react'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
 import { listBookmarkedKeys } from '@/lib/bookmarks'
 import { useNotifications } from '@/lib/notifications'
-import { clearCurrentUser, getUserInitials, useCurrentUser } from '@/lib/current-user'
+import { useAuth } from '@/context/AuthContext'
 import { getRequestTypeColor } from '@/lib/request-type'
 
 const HUB_CHOICES = [
@@ -105,7 +105,7 @@ export function HubPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
-  const currentUser = useCurrentUser()
+  const { user } = useAuth()
   const [isCustomizationOpen, setIsCustomizationOpen] = useState(false)
   const [hubStyle, setHubStyle] = useState<HubStyle>(() => readHubStyleFromStorage())
   const currentPath = `${location.pathname}${location.search}`
@@ -115,6 +115,11 @@ export function HubPage() {
   const [postLoginMessage, setPostLoginMessage] = useState(effectiveLoginMessage)
   const [isPostLoginMessageOpen, setIsPostLoginMessageOpen] = useState(Boolean(effectiveLoginMessage))
 
+  const email = user?.username ?? ''
+  const initials = (user?.name || user?.username || '')
+    .split(/[\s@.]/).filter(Boolean).slice(0, 2)
+    .map((p: string) => p[0].toUpperCase()).join('') || '?'
+
   useEffect(() => {
     if (!loginMessageFromState || alreadyShown) return
     sessionStorage.setItem('keyfor-login-msg-shown', '1')
@@ -123,7 +128,6 @@ export function HubPage() {
   }, [loginMessageFromState, alreadyShown])
 
   const handleLogout = () => {
-    clearCurrentUser()
     sessionStorage.removeItem('keyfor-login-msg-shown')
     navigate('/login')
   }
@@ -239,8 +243,8 @@ export function HubPage() {
           </button>
           <UserProfileMenu
               accentColor="#009B9B"
-              email={currentUser?.email ?? ''}
-              initials={getUserInitials(currentUser)}
+              email={email}
+              initials={initials}
               onLogout={handleLogout}
             />
         </div>
