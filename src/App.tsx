@@ -48,21 +48,7 @@ function App() {
 
           {/* Pagine con TopNav */}
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
-            <Route path="/richieste/sposta-data" element={<SpostaDataPage />} />
-            <Route path="/richieste/non-conformita" element={<SpostaDataPage />} />
-            <Route path="/richieste/sollecito" element={<SpostaDataPage />} />
-            <Route path="/richieste/giacenza-articolo" element={<SpostaDataPage />} />
-            <Route path="/richieste/reso-merce" element={<SpostaDataPage />} />
-            <Route path="/richieste/variazione-prezzo" element={<SpostaDataPage />} />
-            <Route path="/richieste/blocco-ordine" element={<SpostaDataPage />} />
-            <Route path="/richieste/sblocco-ordine" element={<SpostaDataPage />} />
-            <Route path="/richieste/verifica-pagamento" element={<SpostaDataPage />} />
-            <Route path="/richieste/aggiornamento-anagrafica" element={<SpostaDataPage />} />
-            <Route path="/richieste/richiesta-fattura" element={<SpostaDataPage />} />
-            <Route path="/richieste/reclamo-trasporto" element={<SpostaDataPage />} />
-            <Route path="/richieste/priorita-consegna" element={<SpostaDataPage />} />
-            <Route path="/richieste/richiesta-documenti" element={<SpostaDataPage />} />
-            <Route path="/richieste/cambio-vettore" element={<SpostaDataPage />} />
+            <Route path="/richieste/:code" element={<SpostaDataPage />} />
             <Route path="/dashboard" element={<Navigate to="/tickets?status=open" replace />} />
             <Route path="/tickets" element={<TicketListPage />} />
             <Route path="/tickets/new" element={<NewTicketPage />} />

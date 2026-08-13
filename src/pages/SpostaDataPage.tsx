@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Bookmark, Search, X } from 'lucide-react'
 import { BackButton } from '@/components/ui/back-button'
 import { CancelConfirmDialog } from '@/components/ui/CancelConfirmDialog'
@@ -7,6 +7,7 @@ import { handleHorizontalMouseDragScroll, handleHorizontalWheelScroll } from '@/
 import { getRequestTypeColor } from '@/lib/request-type'
 import { getBookmarked, setBookmarked } from '@/lib/bookmarks'
 import { useBodyScrollLock } from '@/lib/use-body-scroll-lock'
+import { useAuth } from '@/context/AuthContext'
 
 // ── Mock BC data ──────────────────────────────────────────────────────────────
 const BC_CLIENTI = [
@@ -249,7 +250,8 @@ function DateField({ name, label, value, onChange, required = false }: { name: s
 // ── Main page ─────────────────────────────────────────────────────────────────
 export function SpostaDataPage() {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const { code } = useParams<{ code: string }>()
+  const { templates } = useAuth()
   const [form, setForm] = useState({ cliente: '', articolo: '', vecchiaData: '', nuovaData: '' })
   const [openDialog, setOpenDialog] = useState<DialogType>(null)
   const [isInfoOpen, setIsInfoOpen] = useState(false)
@@ -340,72 +342,9 @@ export function SpostaDataPage() {
     setComments((current) => current.filter((comment) => comment.id !== id))
   }
 
-  const requestConfig: Record<string, { label: string; info: string }> = {
-    'sposta-data': {
-      label: 'Sposta Data',
-      info: 'Questa richiesta serve a modificare la data di consegna o la data di scadenza associata a cliente e articolo.',
-    },
-    'non-conformita': {
-      label: 'Non Conformità',
-      info: 'Questa richiesta serve a segnalare una non conformità relativa a prodotto, documento o consegna.',
-    },
-    sollecito: {
-      label: 'Sollecito',
-      info: 'Questa richiesta serve a inviare un sollecito per attività o documenti in attesa.',
-    },
-    'giacenza-articolo': {
-      label: 'Giacenza Articolo',
-      info: 'Questa richiesta serve a verificare disponibilità e giacenza di un articolo.',
-    },
-    'reso-merce': {
-      label: 'Reso Merce',
-      info: 'Questa richiesta serve a gestire un reso merce con motivazione e dati logistici.',
-    },
-    'variazione-prezzo': {
-      label: 'Variazione Prezzo',
-      info: 'Questa richiesta serve a proporre o confermare una variazione prezzo su cliente o articolo.',
-    },
-    'blocco-ordine': {
-      label: 'Blocco Ordine',
-      info: 'Questa richiesta serve a bloccare un ordine in corso per verifiche amministrative o operative.',
-    },
-    'sblocco-ordine': {
-      label: 'Sblocco Ordine',
-      info: 'Questa richiesta serve a sbloccare un ordine precedentemente fermato.',
-    },
-    'verifica-pagamento': {
-      label: 'Verifica Pagamento',
-      info: 'Questa richiesta serve a verificare stato pagamento e riconciliazione contabile.',
-    },
-    'aggiornamento-anagrafica': {
-      label: 'Aggiornamento Anagrafica',
-      info: 'Questa richiesta serve ad aggiornare i dati anagrafici di cliente o contatto.',
-    },
-    'richiesta-fattura': {
-      label: 'Richiesta Fattura',
-      info: 'Questa richiesta serve a richiedere emissione, reinvio o rettifica di fattura.',
-    },
-    'reclamo-trasporto': {
-      label: 'Reclamo Trasporto',
-      info: 'Questa richiesta serve a segnalare anomalie di trasporto o consegna.',
-    },
-    'priorita-consegna': {
-      label: 'Priorità Consegna',
-      info: 'Questa richiesta serve a impostare una priorità di consegna su ordine o spedizione.',
-    },
-    'richiesta-documenti': {
-      label: 'Richiesta Documenti',
-      info: 'Questa richiesta serve a ottenere documentazione commerciale o logistica.',
-    },
-    'cambio-vettore': {
-      label: 'Cambio Vettore',
-      info: 'Questa richiesta serve a modificare il vettore assegnato alla spedizione.',
-    },
-  }
-
-  const requestKey = pathname.split('/').pop() ?? 'sposta-data'
-  const currentRequest = requestConfig[requestKey] ?? requestConfig['sposta-data']
-  const bookmarkKey = `create:${requestKey}`
+  const template = templates.find(t => t.code.toLowerCase() === (code ?? '').toLowerCase())
+  const currentRequest = { label: template?.description ?? code ?? '', info: template?.informationalText ?? '' }
+  const bookmarkKey = `create:${code ?? ''}`
   const [isBookmarked, setIsBookmarked] = useState(() => getBookmarked(bookmarkKey))
   const currentRequestColor = getRequestTypeColor(currentRequest.label)
   const isDetailsComplete = Boolean(form.cliente && form.articolo && form.vecchiaData && form.nuovaData)

@@ -1,35 +1,38 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { fetchUsersCompleteTree } from '../services/api'
+import { parseTemplatesFromBcRows, type RequestTemplate } from '../lib/user-templates'
 
 export interface User {
-  homeAccountId: string;
-  environment: string;
-  tenantId: string;
-  username: string;
-  localAccountId: string;
-  name?: string;
-  bcDetails?: any; // Dati recuperati da BC
+  name?: string
+  email?: string
+  tenantId?: string
+  oid?: string
+  isAdmin?: boolean
+  // campi MSAL legacy (potrebbero essere presenti a seconda della versione)
+  username?: string
 }
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
+  user: User | null
+  templates: RequestTemplate[]
+  loading: boolean
+  error: string | null
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  templates: [],
   loading: true,
   error: null,
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [templates, setTemplates] = useState<RequestTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Chiamata all'API Node.js del Key Hub per prendere la sessione MSAL
     fetch('/api/me')
       .then((res) => {
         if (!res.ok) throw new Error('Non autenticato')
@@ -37,15 +40,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then(async (data) => {
         if (data && data.user) {
-          const currentUser = data.user
-          // Una volta recuperata l'identita', interroghiamo BC per questo utente
-          try {
-            const bcData = await fetchUsersCompleteTree(currentUser.username)
-            if (bcData && bcData.value && bcData.value.length > 0) {
-              currentUser.bcDetails = bcData.value[0]
+          const currentUser: User = data.user
+          // email può essere in .email o .username (compatibilità MSAL)
+          const email = currentUser.email ?? currentUser.username ?? ''
+          if (email) {
+            try {
+              const bcData = await fetchUsersCompleteTree(email)
+              if (bcData?.value?.length > 0) {
+                setTemplates(parseTemplatesFromBcRows(bcData.value))
+              }
+            } catch (e) {
+              console.warn('Impossibile recuperare template BC per questo utente', e)
             }
-          } catch (e) {
-            console.warn('Impossibile recuperare dettagli BC per questo utente', e)
           }
           setUser(currentUser)
         } else {
@@ -62,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading, error }}>
+    <AuthContext.Provider value={{ user, templates, loading, error }}>
       {children}
     </AuthContext.Provider>
   )
