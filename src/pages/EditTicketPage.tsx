@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import type { Ticket } from '@/data/mock-tickets'
 import { BackButton } from '@/components/ui/back-button'
 import { CancelConfirmDialog } from '@/components/ui/CancelConfirmDialog'
 
 export function EditTicketPage() {
-  const { id } = useParams()
   const navigate = useNavigate()
-  const ticket = null // TODO: fetch ticket by id from API
+  const ticket: Ticket | null = null // TODO: fetch ticket by id from API
 
   const [form, setForm] = useState({
     title: ticket?.title ?? '',
