@@ -28,12 +28,13 @@ interface FileAttachment {
 type TicketTab = 'details' | 'comments' | 'attachments' | 'actions'
 
 export function TicketDetailPage() {
-  const { id } = useParams()
+  const { id: _id } = useParams()
   const navigate = useNavigate()
-  const ticket: Ticket | null = null // TODO: fetch ticket by id from API
+  // TODO: fetch ticket by id from API
+  const [ticket, setTicket] = useState<Ticket | null>(null)
 
-  const [status, setStatus] = useState<Status>(ticket?.status ?? 'open')
-  const [assignee, setAssignee] = useState(ticket?.assignee ?? '')
+  const [status, setStatus] = useState<Status>('open')
+  const [assignee, setAssignee] = useState('')
   const [comments, setComments] = useState<Comment[]>([])
   const [commentText, setCommentText] = useState('')
   const [activeTab, setActiveTab] = useState<TicketTab>('details')

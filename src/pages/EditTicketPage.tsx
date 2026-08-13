@@ -5,8 +5,9 @@ import { BackButton } from '@/components/ui/back-button'
 import { CancelConfirmDialog } from '@/components/ui/CancelConfirmDialog'
 
 export function EditTicketPage() {
+  const { id: _id } = useParams()
   const navigate = useNavigate()
-  const ticket: Ticket | null = null // TODO: fetch ticket by id from API
+  const [ticket] = useState<Ticket | null>(null) // TODO: fetch ticket by id from API
 
   const [form, setForm] = useState({
     title: ticket?.title ?? '',
