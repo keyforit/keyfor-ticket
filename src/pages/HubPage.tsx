@@ -4,6 +4,7 @@ import { Bell, ChevronRight, Plus, Settings } from 'lucide-react'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
 import { listBookmarkedKeys } from '@/lib/bookmarks'
 import { useNotifications } from '@/lib/notifications'
+import { clearCurrentUser, getUserInitials, useCurrentUser } from '@/lib/current-user'
 import { getRequestTypeColor } from '@/lib/request-type'
 
 const HUB_CHOICES = [
@@ -104,6 +105,7 @@ export function HubPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
+  const currentUser = useCurrentUser()
   const [isCustomizationOpen, setIsCustomizationOpen] = useState(false)
   const [hubStyle, setHubStyle] = useState<HubStyle>(() => readHubStyleFromStorage())
   const currentPath = `${location.pathname}${location.search}`
@@ -121,6 +123,7 @@ export function HubPage() {
   }, [loginMessageFromState, alreadyShown])
 
   const handleLogout = () => {
+    clearCurrentUser()
     sessionStorage.removeItem('keyfor-login-msg-shown')
     navigate('/login')
   }
@@ -234,7 +237,12 @@ export function HubPage() {
           >
             <Settings className="h-4 w-4" />
           </button>
-          <UserProfileMenu accentColor="#009B9B" onLogout={handleLogout} />
+          <UserProfileMenu
+              accentColor="#009B9B"
+              email={currentUser?.email ?? ''}
+              initials={getUserInitials(currentUser)}
+              onLogout={handleLogout}
+            />
         </div>
       </header>
 

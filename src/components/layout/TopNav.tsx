@@ -3,6 +3,7 @@ import { ChevronLeft, Bell, Settings, ArrowUp, ArrowDown } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UserProfileMenu } from './UserProfileMenu'
 import { useNotifications } from '@/lib/notifications'
+import { clearCurrentUser, getUserInitials, useCurrentUser } from '@/lib/current-user'
 import {
   resetTicketListCustomization,
   setTicketListColumnOrder,
@@ -20,6 +21,7 @@ export function TopNav() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
   const { visibleColumns, groupingMode, groupingYear, columnOrder } = useTicketListCustomization()
+  const currentUser = useCurrentUser()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const currentPath = `${location.pathname}${location.search}`
   const statusParam = new URLSearchParams(location.search).get('status')
@@ -41,6 +43,7 @@ export function TopNav() {
   }, [availableYears, groupingYear])
 
   const handleLogout = () => {
+    clearCurrentUser()
     navigate('/login')
   }
 
@@ -90,7 +93,12 @@ export function TopNav() {
         >
           <Settings className="h-4 w-4" />
         </button>
-        <UserProfileMenu accentColor="#009B9B" onLogout={handleLogout} />
+        <UserProfileMenu
+            accentColor="#009B9B"
+            email={currentUser?.email ?? ''}
+            initials={getUserInitials(currentUser)}
+            onLogout={handleLogout}
+          />
       </div>
 
       {isSettingsOpen && (

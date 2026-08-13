@@ -1,12 +1,26 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getPostLoginMessage } from '@/lib/post-login-message'
+import { fetchCurrentUser, useCurrentUserState } from '@/lib/current-user'
 
 type LoginVariant = 'centered' | 'card' | 'spotlight'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const [variant, setVariant] = useState<LoginVariant>('centered')
+  const userState = useCurrentUserState()
+
+  // Tenta auto-login: se la sessione KeyHub è attiva, entra direttamente
+  useEffect(() => {
+    fetchCurrentUser()
+  }, [])
+
+  useEffect(() => {
+    if (userState.status === 'authenticated') {
+      const loginMessage = getPostLoginMessage()
+      navigate('/hub', { replace: true, state: loginMessage ? { loginMessage } : undefined })
+    }
+  }, [userState.status, navigate])
 
   useEffect(() => {
     const htmlStyle = document.documentElement.style
@@ -33,8 +47,8 @@ export function LoginPage() {
   }, [])
 
   const handleSignIn = () => {
-    const loginMessage = getPostLoginMessage()
-    navigate('/hub', { replace: true, state: loginMessage ? { loginMessage } : undefined })
+    // Reindirizza al login di KeyHub (stessa origin in produzione)
+    window.location.href = '/login'
   }
 
   const LogoAndActions = (
