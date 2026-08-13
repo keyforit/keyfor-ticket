@@ -1,4 +1,4 @@
-﻿name: Deploy Key Ticket to Subfolder
+name: Deploy Key Ticket to Subfolder
 on:
   push:
     branches: [ main ]
@@ -22,8 +22,8 @@ jobs:
     - name: FTP Deploy to Virtual Directory
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: $\{{ secrets.FTP_SERVER }}
-        username: $\{{ secrets.FTP_USERNAME }}
-        password: $\{{ secrets.FTP_PASSWORD }}
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/ 
         server-dir: /site/ticket/
