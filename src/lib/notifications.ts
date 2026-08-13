@@ -17,52 +17,7 @@ export interface AppNotification {
   messages: NotificationMessage[]
 }
 
-const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  {
-    id: 'N-001',
-    title: 'Nuova richiesta ricevuta',
-    preview: 'Sposta Data',
-    time: 'Oggi, 09:15',
-    unread: true,
-    ticketId: 'KFT-001',
-    messages: [
-      { id: 'N-001-M1', author: 'Sistema', text: 'Nuova richiesta ricevuta: Sposta Data.', time: '09:15' },
-      { id: 'N-001-M2', author: 'Sistema', text: 'Controlla i dettagli e conferma la presa in carico.', time: '09:16' },
-    ],
-  },
-  {
-    id: 'N-002',
-    title: 'Richiesta aggiornata',
-    preview: 'KFT-002 è stata aggiornata',
-    time: 'Ieri, 17:42',
-    unread: true,
-    ticketId: 'KFT-002',
-    messages: [
-      { id: 'N-002-M1', author: 'Sistema', text: 'La richiesta KFT-002 è stata aggiornata.', time: '17:42' },
-      { id: 'N-002-M2', author: 'Sistema', text: 'Nuovo stato: In lavorazione.', time: '17:43' },
-    ],
-  },
-  {
-    id: 'N-003',
-    title: 'Richiesta chiusa',
-    preview: 'KFT-005 è stata chiusa',
-    time: 'Ieri, 11:08',
-    unread: false,
-    ticketId: 'KFT-005',
-    messages: [
-      { id: 'N-003-M1', author: 'Sistema', text: 'La richiesta KFT-005 è stata chiusa.', time: '11:08' },
-    ],
-  },
-]
-
-function cloneInitialNotifications() {
-  return INITIAL_NOTIFICATIONS.map((notification) => ({
-    ...notification,
-    messages: notification.messages.map((message) => ({ ...message })),
-  }))
-}
-
-let notificationsState: AppNotification[] = cloneInitialNotifications()
+let notificationsState: AppNotification[] = []
 
 const listeners = new Set<() => void>()
 
@@ -126,10 +81,7 @@ export function appendNotificationReply(notificationId: string, text: string) {
   emitNotificationsChange()
 }
 
-export function resetNotificationsForDemo() {
-  notificationsState = cloneInitialNotifications().map((notification, index) => ({
-    ...notification,
-    unread: index === 0,
-  }))
+export function setNotifications(notifications: AppNotification[]) {
+  notificationsState = notifications
   emitNotificationsChange()
 }

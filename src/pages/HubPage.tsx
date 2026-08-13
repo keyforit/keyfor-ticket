@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Bell, ChevronRight, Plus, Settings } from 'lucide-react'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
 import { listBookmarkedKeys } from '@/lib/bookmarks'
-import { resetNotificationsForDemo, useNotifications } from '@/lib/notifications'
+import { useNotifications } from '@/lib/notifications'
 import { getRequestTypeColor } from '@/lib/request-type'
 
 const HUB_CHOICES = [
@@ -121,7 +121,6 @@ export function HubPage() {
   }, [loginMessageFromState, alreadyShown])
 
   const handleLogout = () => {
-    resetNotificationsForDemo()
     sessionStorage.removeItem('keyfor-login-msg-shown')
     navigate('/login')
   }

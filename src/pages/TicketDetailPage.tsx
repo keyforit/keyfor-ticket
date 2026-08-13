@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CheckCircle2, Edit, Send, UserCheck, XCircle } from 'lucide-react'
-import { mockTickets, type Status } from '@/data/mock-tickets'
+import type { Status } from '@/data/mock-tickets'
 import { BackButton } from '@/components/ui/back-button'
 import { StatusBadge } from '@/components/ui/badges'
 import { handleHorizontalMouseDragScroll, handleHorizontalWheelScroll } from '@/lib/horizontal-wheel-scroll'
@@ -30,7 +30,7 @@ type TicketTab = 'details' | 'comments' | 'attachments' | 'actions'
 export function TicketDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const ticket = mockTickets.find((item) => item.id === id)
+  const ticket = null // TODO: fetch ticket by id from API
 
   const [status, setStatus] = useState<Status>(ticket?.status ?? 'open')
   const [assignee, setAssignee] = useState(ticket?.assignee ?? '')

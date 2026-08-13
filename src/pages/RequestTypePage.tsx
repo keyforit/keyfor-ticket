@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Bell, Settings } from 'lucide-react'
 import { BackButton } from '@/components/ui/back-button'
 import { UserProfileMenu } from '@/components/layout/UserProfileMenu'
-import { resetNotificationsForDemo, useNotifications } from '@/lib/notifications'
+import { useNotifications } from '@/lib/notifications'
 import { handleHorizontalMouseDragScroll, handleHorizontalWheelScroll } from '@/lib/horizontal-wheel-scroll'
 
 type RequestArea = 'ordini' | 'magazzino' | 'logistica' | 'amministrazione'
@@ -178,7 +178,6 @@ export function RequestTypePage() {
   const activeRequestTypeIds = requestTypeByArea[activeArea]
   const filteredRequestTypes = requestTypes.filter((request) => activeRequestTypeIds.includes(request.id))
   const handleLogout = () => {
-    resetNotificationsForDemo()
     navigate('/login')
   }
 

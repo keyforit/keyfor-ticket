@@ -9,8 +9,8 @@ interface UserProfileMenuProps {
 
 export function UserProfileMenu({
   accentColor,
-  email = 'marco.rossi@keyfor.it',
-  initials = 'MR',
+  email = '',
+  initials = '?',
   onLogout,
 }: UserProfileMenuProps) {
   const [open, setOpen] = useState(false)

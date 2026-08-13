@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronLeft, Bell, Settings, ArrowUp, ArrowDown } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UserProfileMenu } from './UserProfileMenu'
-import { mockTickets } from '@/data/mock-tickets'
-import { resetNotificationsForDemo, useNotifications } from '@/lib/notifications'
+import { useNotifications } from '@/lib/notifications'
 import {
   resetTicketListCustomization,
   setTicketListColumnOrder,
@@ -27,7 +26,7 @@ export function TopNav() {
   const canCustomizeTicketList = location.pathname === '/tickets' && (statusParam === 'open' || statusParam === 'closed')
   const hasSettings = canCustomizeTicketList
   const canUseAssigneeGrouping = statusParam === 'open' || statusParam === 'closed'
-  const availableYears = getAvailableYears(mockTickets)
+  const availableYears = getAvailableYears([])
 
   useEffect(() => {
     if (!canUseAssigneeGrouping && groupingMode === 'assignee') {
@@ -42,7 +41,6 @@ export function TopNav() {
   }, [availableYears, groupingYear])
 
   const handleLogout = () => {
-    resetNotificationsForDemo()
     navigate('/login')
   }
 

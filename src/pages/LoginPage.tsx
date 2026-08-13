@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { resetNotificationsForDemo } from '@/lib/notifications'
 import { getPostLoginMessage } from '@/lib/post-login-message'
 
 type LoginVariant = 'centered' | 'card' | 'spotlight'
@@ -34,7 +33,6 @@ export function LoginPage() {
   }, [])
 
   const handleSignIn = () => {
-    resetNotificationsForDemo()
     const loginMessage = getPostLoginMessage()
     navigate('/hub', { replace: true, state: loginMessage ? { loginMessage } : undefined })
   }
@@ -62,7 +60,7 @@ export function LoginPage() {
   )
 
   return (
-    <div className="fixed inset-0 bg-[#F8F9FA]">
+    <div className="absolute inset-0 bg-[#F8F9FA]">
       <div className="absolute right-4 top-4 z-10 inline-flex items-center gap-1 rounded-md border border-[#D2D0CE] bg-white p-1">
         {(
           [
