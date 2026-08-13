@@ -180,8 +180,9 @@ export function RequestTypePage() {
   const activeRequestTypeIds = requestTypeByArea[activeArea]
   const filteredRequestTypes = requestTypes.filter((request) => activeRequestTypeIds.includes(request.id))
 
-  const email = user?.username ?? ''
-  const initials = (user?.name || user?.username || '')
+  const email = (user as any)?.email ?? user?.username ?? ''
+  const displayName = user?.name ?? ''
+  const initials = (displayName || email)
     .split(/[\s@.]/).filter(Boolean).slice(0, 2)
     .map((p: string) => p[0].toUpperCase()).join('') || '?'
 
@@ -228,6 +229,7 @@ export function RequestTypePage() {
           <UserProfileMenu
               accentColor="#009B9B"
               email={email}
+              name={displayName}
               initials={initials}
               onLogout={handleLogout}
             />

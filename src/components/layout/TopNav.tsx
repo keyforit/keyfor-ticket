@@ -30,8 +30,9 @@ export function TopNav() {
   const canUseAssigneeGrouping = statusParam === 'open' || statusParam === 'closed'
   const availableYears = getAvailableYears([])
 
-  const email = user?.username ?? ''
-  const initials = (user?.name || user?.username || '')
+  const email = (user as any)?.email ?? user?.username ?? ''
+  const displayName = user?.name ?? ''
+  const initials = (displayName || email)
     .split(/[\s@.]/).filter(Boolean).slice(0, 2)
     .map((p: string) => p[0].toUpperCase()).join('') || '?'
 
@@ -100,6 +101,7 @@ export function TopNav() {
         <UserProfileMenu
             accentColor="#009B9B"
             email={email}
+            name={displayName}
             initials={initials}
             onLogout={handleLogout}
           />

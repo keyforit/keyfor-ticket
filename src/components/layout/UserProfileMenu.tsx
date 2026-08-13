@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 interface UserProfileMenuProps {
   accentColor: string
   email?: string
+  name?: string
   initials?: string
   onLogout: () => void
 }
@@ -10,6 +11,7 @@ interface UserProfileMenuProps {
 export function UserProfileMenu({
   accentColor,
   email = '',
+  name = '',
   initials = '?',
   onLogout,
 }: UserProfileMenuProps) {
@@ -49,9 +51,10 @@ export function UserProfileMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 rounded-md border border-[#EDEBE9] bg-white p-3 shadow-xl">
+        <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-64 rounded-md border border-[#EDEBE9] bg-white p-3 shadow-xl">
           <p className="text-xs text-[#605E5C]">Account</p>
-          <p className="mt-1 text-sm font-medium text-[#201F1E]">{email}</p>
+          {name && <p className="mt-1 text-sm font-medium text-[#201F1E] truncate">{name}</p>}
+          {email && <p className="mt-0.5 text-xs text-[#605E5C] truncate">{email}</p>}
           <button
             type="button"
             onClick={onLogout}
