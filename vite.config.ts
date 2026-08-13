@@ -5,7 +5,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  base: '/ticket/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -13,3 +13,4 @@ export default defineConfig({
     },
   },
 })
+
