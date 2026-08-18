@@ -13,9 +13,10 @@ export async function fetchUsersCompleteTree(email: string) {
   }
 }
 
-export async function createTicketViaApi(ticketData: any) {
+export async function createTicketViaApi(ticketData: any, tenantId: string) {
   try {
-    const res = await fetch('/api/ticket/create', {
+    const url = `https://api.businesscentral.dynamics.com/v2.0/${tenantId}/TEST/ODataV4/TicketWebService`
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

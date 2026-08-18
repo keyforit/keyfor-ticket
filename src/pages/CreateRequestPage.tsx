@@ -279,7 +279,7 @@ function SelectField({
 export function CreateRequestPage() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
-  const { templates } = useAuth()
+  const { templates, user } = useAuth()
   const [formValues, setFormValues] = useState<Record<string, string>>({})
   const [openLookup, setOpenLookup] = useState<LookupDialogState | null>(null)
   const [isInfoOpen, setIsInfoOpen] = useState(false)
@@ -331,6 +331,10 @@ export function CreateRequestPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    if (!user?.tenantId) {
+      setSaveError('Impossibile recuperare il Tenant ID dal profilo utente.')
+      return
+    }
     setIsSaving(true)
     setSaveError('')
     try {
@@ -341,7 +345,7 @@ export function CreateRequestPage() {
           .map(([fieldName, fieldValue]) => ({ fieldName, fieldValue })),
         notes: comments.map((n) => n.text),
       }
-      await createTicketViaApi(payload)
+      await createTicketViaApi(payload, user.tenantId)
       navigate('/tickets?status=open')
     } catch (err: any) {
       setSaveError(err.message || 'Errore durante il salvataggio su Business Central')
