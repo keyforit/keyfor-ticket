@@ -5,7 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { DebugPanel } from '@/components/layout/DebugPanel'
 import { HubPage } from '@/pages/HubPage'
 import { RequestTypePage } from '@/pages/RequestTypePage'
-import { SpostaDataPage } from '@/pages/SpostaDataPage'
+import { CreateRequestPage } from '@/pages/CreateRequestPage'
 import { TicketListPage } from '@/pages/TicketListPage'
 import { TicketDetailPage } from '@/pages/TicketDetailPage'
 import { EditTicketPage } from '@/pages/EditTicketPage'
@@ -50,7 +50,7 @@ function App() {
 
           {/* Pagine con TopNav */}
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
-            <Route path="/richieste/:code" element={<SpostaDataPage />} />
+            <Route path="/richieste/:code" element={<CreateRequestPage />} />
             <Route path="/dashboard" element={<Navigate to="/tickets?status=open" replace />} />
             <Route path="/tickets" element={<TicketListPage />} />
             <Route path="/tickets/new" element={<NewTicketPage />} />

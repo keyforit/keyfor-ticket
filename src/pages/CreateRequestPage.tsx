@@ -276,7 +276,7 @@ function SelectField({
   )
 }
 
-export function SpostaDataPage() {
+export function CreateRequestPage() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
   const { templates } = useAuth()
@@ -563,7 +563,7 @@ export function SpostaDataPage() {
 
       {activeTab === 'details' && (
         template ? (
-          <form id="sposta-data-form" onSubmit={handleSubmit} className="mt-0 space-y-1">
+          <form id="create-request-form" onSubmit={handleSubmit} className="mt-0 space-y-1">
             {template.fields.map(renderField)}
           </form>
         ) : (
@@ -692,7 +692,7 @@ export function SpostaDataPage() {
         </button>
         <button
           type="submit"
-          form="sposta-data-form"
+          form="create-request-form"
           hidden={activeTab !== 'details' || !template}
           disabled={!isDetailsComplete || isSaving}
           className="bg-[#009B9B] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#007575] disabled:cursor-not-allowed disabled:bg-[#E5E7E9] disabled:text-[#605E5C] disabled:hover:bg-[#E5E7E9]"
