@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/ui/badges'
 import type { Status } from '@/data/mock-tickets'
 import { BackButton } from '@/components/ui/back-button'
 import { CancelConfirmDialog } from '@/components/ui/CancelConfirmDialog'
+import { createTicketViaApi } from '@/services/api'
 
 interface TicketDraft {
   title: string
@@ -40,8 +41,31 @@ export function TicketReviewPage() {
   const now = new Date().toLocaleString('it-IT')
   const newId = `KFT-00${Math.floor(Math.random() * 90) + 10}`
 
-  const handleSave = () => {
-    navigate('/tickets', { replace: true })
+  const [isSaving, setIsSaving] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleSave = async () => {
+    setIsSaving(true)
+    setErrorMsg('')
+    try {
+      const payload = {
+        createdBy: 'user@keyfor.it', // mock user per ora
+        creationDate: new Date().toISOString(),
+        templateHeaderCode: 'WEB', // codice template
+        departmentCode: 'IT',
+        fields: [
+          { fieldName: 'Subject', fieldValue: draft.title },
+          { fieldName: 'Description', fieldValue: draft.description },
+          { fieldName: 'Tags', fieldValue: draft.tags }
+        ]
+      }
+      await createTicketViaApi(payload)
+      navigate('/tickets', { replace: true })
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Errore durante il salvataggio su Business Central')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleCancel = () => {
@@ -83,13 +107,21 @@ export function TicketReviewPage() {
           <button
             type="button"
             onClick={handleSave}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-md bg-[#009B9B] px-4 py-2 text-sm font-medium leading-none text-white hover:bg-[#007575]"
+            disabled={isSaving}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-md bg-[#009B9B] px-4 py-2 text-sm font-medium leading-none text-white hover:bg-[#007575] disabled:opacity-50"
           >
             <Save className="h-4 w-4 shrink-0" />
-            Salva
+            {isSaving ? 'Salvataggio...' : 'Salva'}
           </button>
         </div>
       </div>
+
+      {errorMsg && (
+        <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[#FDF3F4] px-4 py-3 text-sm text-[#A4262C]">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <p>{errorMsg}</p>
+        </div>
+      )}
 
       <CancelConfirmDialog
         open={isCancelConfirmOpen}
