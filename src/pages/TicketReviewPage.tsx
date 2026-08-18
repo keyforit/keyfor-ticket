@@ -6,6 +6,7 @@ import type { Status } from '@/data/mock-tickets'
 import { BackButton } from '@/components/ui/back-button'
 import { CancelConfirmDialog } from '@/components/ui/CancelConfirmDialog'
 import { createTicketViaApi } from '@/services/api'
+import { useAuth } from '@/context/AuthContext'
 
 interface TicketDraft {
   title: string
@@ -41,10 +42,16 @@ export function TicketReviewPage() {
   const now = new Date().toLocaleString('it-IT')
   const newId = `KFT-00${Math.floor(Math.random() * 90) + 10}`
 
+  const { user } = useAuth()
   const [isSaving, setIsSaving] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
   const handleSave = async () => {
+    if (!user?.tenantId) {
+      setErrorMsg('Impossibile recuperare il Tenant ID dal profilo utente.')
+      return
+    }
+    
     setIsSaving(true)
     setErrorMsg('')
     try {
@@ -59,7 +66,7 @@ export function TicketReviewPage() {
           { fieldName: 'Tags', fieldValue: draft.tags }
         ]
       }
-      await createTicketViaApi(payload)
+      await createTicketViaApi(payload, user.tenantId)
       navigate('/tickets', { replace: true })
     } catch (err: any) {
       setErrorMsg(err.message || 'Errore durante il salvataggio su Business Central')
