@@ -15,17 +15,13 @@ export async function fetchUsersCompleteTree(email: string) {
 
 export async function createTicketViaApi(ticketData: any, tenantId: string) {
   try {
-    // Passiamo tramite il backend Azure (che aggiunge il token Managed Identity)
-    const url = '/api/ticket/create'
+    const url = `https://api.businesscentral.dynamics.com/v2.0/${tenantId}/TEST/ODataV4/TicketWebService`
     const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...ticketData,
-        tenantId // Inviamo il tenantId al backend così può comporre l'URL BC
-      }),
+      body: JSON.stringify(ticketData),
     })
     
     if (!res.ok) {
