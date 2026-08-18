@@ -1,5 +1,4 @@
 import { useSyncExternalStore } from 'react'
-import { emitDebugEvent } from './debug'
 
 export interface CurrentUser {
   name: string | null
@@ -57,16 +56,13 @@ export function getUserInitials(user: CurrentUser | null): string {
  */
 export async function fetchCurrentUser(): Promise<void> {
   try {
-    emitDebugEvent({ type: 'request', method: 'GET', url: '/api/me' })
     const res = await fetch('/api/me', { credentials: 'include' })
     if (!res.ok) {
-      emitDebugEvent({ type: 'error', method: 'GET', url: '/api/me', status: res.status, message: 'Non autenticato' })
       state = { status: 'unauthenticated' }
       emit()
       return
     }
     const data = await res.json()
-    emitDebugEvent({ type: 'response', method: 'GET', url: '/api/me', status: res.status, payload: data })
     if (data?.user?.email) {
       state = { status: 'authenticated', user: data.user as CurrentUser }
     } else {
