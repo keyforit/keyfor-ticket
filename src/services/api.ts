@@ -1,4 +1,4 @@
-import { emitDebugEvent } from '../components/layout/DebugPanel'
+import { emitDebugEvent } from '@/lib/debug'
 
 export async function fetchUsersCompleteTree(email: string) {
   try {

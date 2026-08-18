@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X, CheckCircle, AlertCircle, Bug } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-
-interface DebugEvent {
-  id: string
-  timestamp: Date
-  type: 'request' | 'response' | 'error'
-  method?: string
-  url?: string
-  payload?: any
-  status?: number
-  message?: string
-}
+import type { DebugEvent } from '@/lib/debug'
 
 export function DebugPanel() {
   const [events, setEvents] = useState<DebugEvent[]>([])
@@ -91,18 +81,4 @@ export function DebugPanel() {
       )}
     </div>
   )
-}
-
-export function emitDebugEvent(data: Omit<DebugEvent, 'id' | 'timestamp'>) {
-  const isDebugEnabled = localStorage.getItem('kf_debug_enabled') === 'true'
-  if (!isDebugEnabled) return
-
-  const event = new CustomEvent('kf_debug_event', {
-    detail: {
-      ...data,
-      id: Math.random().toString(36).substring(2, 9),
-      timestamp: new Date()
-    }
-  })
-  window.dispatchEvent(event)
 }
