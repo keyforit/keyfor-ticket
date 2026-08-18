@@ -8,6 +8,7 @@ import { getRequestTypeColor } from '@/lib/request-type'
 import { getBookmarked, setBookmarked } from '@/lib/bookmarks'
 import { useBodyScrollLock } from '@/lib/use-body-scroll-lock'
 import { useAuth } from '@/context/AuthContext'
+import { createTicketViaApi } from '@/services/api'
 import type { TemplateField } from '@/lib/user-templates'
 
 interface LookupItem {
@@ -325,9 +326,28 @@ export function SpostaDataPage() {
     setOpenLookup(null)
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    navigate('/tickets?status=open')
+    setIsSaving(true)
+    setSaveError('')
+    try {
+      const payload = {
+        templateHeaderCode: template?.code ?? code ?? '',
+        fields: Object.entries(formValues)
+          .filter(([, v]) => v.trim() !== '')
+          .map(([fieldName, fieldValue]) => ({ fieldName, fieldValue })),
+        notes: comments.map((n) => n.text),
+      }
+      await createTicketViaApi(payload)
+      navigate('/tickets?status=open')
+    } catch (err: any) {
+      setSaveError(err.message || 'Errore durante il salvataggio su Business Central')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleCancel = () => {
@@ -674,12 +694,18 @@ export function SpostaDataPage() {
           type="submit"
           form="sposta-data-form"
           hidden={activeTab !== 'details' || !template}
-          disabled={!isDetailsComplete}
+          disabled={!isDetailsComplete || isSaving}
           className="bg-[#009B9B] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#007575] disabled:cursor-not-allowed disabled:bg-[#E5E7E9] disabled:text-[#605E5C] disabled:hover:bg-[#E5E7E9]"
         >
-          Salva
+          {isSaving ? 'Salvataggio...' : 'Salva'}
         </button>
       </div>
+
+      {saveError && (
+        <div className="mx-4 mb-4 rounded border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
+          {saveError}
+        </div>
+      )}
 
       <CancelConfirmDialog
         open={isCancelConfirmOpen}
