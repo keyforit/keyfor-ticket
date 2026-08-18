@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { AppLayout } from '@/components/layout/AppLayout'
+import { DebugPanel } from '@/components/layout/DebugPanel'
 import { HubPage } from '@/pages/HubPage'
 import { RequestTypePage } from '@/pages/RequestTypePage'
 import { SpostaDataPage } from '@/pages/SpostaDataPage'
@@ -41,6 +42,7 @@ function App() {
     <AuthProvider>
       <HashRouter>
         <ScrollToTopOnDesktop />
+        <DebugPanel />
         <Routes>
           {/* Pagine senza TopNav */}
           <Route path="/hub" element={<RequireAuth><HubPage /></RequireAuth>} />

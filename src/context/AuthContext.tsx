@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { fetchUsersCompleteTree } from '../services/api'
 import { parseTemplatesFromBcRows, type RequestTemplate } from '../lib/user-templates'
+import { emitDebugEvent } from '../lib/debug'
 
 export interface User {
   name?: string
@@ -48,12 +49,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
+    emitDebugEvent({ type: 'request', method: 'GET', url: '/api/me' })
     fetch('/api/me')
       .then((res) => {
-        if (!res.ok) throw new Error('Non autenticato')
+        if (!res.ok) {
+          emitDebugEvent({ type: 'error', method: 'GET', url: '/api/me', status: res.status, message: 'Non autenticato' })
+          throw new Error('Non autenticato')
+        }
         return res.json()
       })
       .then(async (data) => {
+        emitDebugEvent({ type: 'response', method: 'GET', url: '/api/me', status: 200, payload: data })
         if (data && data.user) {
           const currentUser: User = data.user
           // email può essere in .email o .username (compatibilità MSAL)
