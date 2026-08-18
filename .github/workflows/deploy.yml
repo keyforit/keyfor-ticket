@@ -2,6 +2,9 @@ name: Deploy Key Ticket to Subfolder
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'apps/keyticket/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   build-and-deploy:
@@ -15,6 +18,7 @@ jobs:
         node-version: '20.x'
 
     - name: Build App
+      working-directory: apps/keyticket
       run: |
         npm install
         npm run build 
@@ -26,6 +30,5 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         protocol: ftps
-        local-dir: ./dist/ 
+        local-dir: ./apps/keyticket/dist/ 
         server-dir: /site/ticket/
-

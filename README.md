@@ -1,32 +1,32 @@
-# React + TypeScript + Vite
+# KeyFor Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Monorepo che contiene:
 
-Currently, two official plugins are available:
+- `apps/keyhub`: portale contenitore (shell web)
+- `apps/keyticket`: modulo ticketing React/Vite
+- `services/keyhub-api`: Azure Functions usate da KeyHub
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Struttura
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+apps/
+  keyhub/
+  keyticket/
+services/
+  keyhub-api/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Sviluppo
+
+- KeyTicket:
+  - `npm run keyticket:dev`
+  - `npm run keyticket:build`
+- API KeyHub:
+  - da `services/keyhub-api` usare i comandi .NET/Azure Functions già previsti dal progetto
+
+## Note
+
+Le integrazioni con Business Central devono restare consistenti:
+- chiamate "API page" (es. user tree) su endpoint dedicati
+- chiamate OData (es. creazione ticket) su endpoint dedicati
+- autenticazione centralizzata via backend/infrastruttura Azure

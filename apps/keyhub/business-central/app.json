@@ -1,0 +1,30 @@
+{
+  "id": "8f6e1c2a-9b3d-4e5f-a1c7-2d4b6e8f0a1c",
+  "name": "KeyHub Integration",
+  "publisher": "Key For",
+  "version": "27.0.0.1",
+  "brief": "Estensione per esporre i moduli licenziati di KEY HUB verso Business Central.",
+  "description": "Tabella e pagina di configurazione dei moduli abilitati per l'integrazione con KEY HUB / KEY TICKET.",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "27.0.0.0",
+  "application": "27.0.0.0",
+  "idRanges": [
+    {
+      "from": 59000,
+      "to": 59049
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": false,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  },
+  "runtime": "16.0",
+  "features": ["NoImplicitWith"]
+}

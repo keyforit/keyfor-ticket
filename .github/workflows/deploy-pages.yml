@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'apps/keyticket/**'
+      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -26,11 +29,14 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: apps/keyticket/package-lock.json
 
       - name: Install dependencies
+        working-directory: apps/keyticket
         run: npm ci
 
       - name: Build
+        working-directory: apps/keyticket
         run: npm run build
 
       - name: Setup Pages
@@ -39,7 +45,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./apps/keyticket/dist
 
   deploy:
     needs: build

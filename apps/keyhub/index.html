@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEY HUB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #f0f2f5 0%, #e4eaf2 60%, #dce8f0 100%);
+        }
+
+        /* Glow effect behind logo */
+        .glow {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(92, 107, 192, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 160px;
+            height: auto;
+            margin-bottom: 2.5rem;
+            mix-blend-mode: multiply;
+            opacity: 0.75;
+            clip-path: inset(6px 0 0 0);
+        }
+
+        .logo-text {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-text .key {
+            color: #2c3340;
+        }
+
+        .logo-text .hub {
+            color: #5C6BC0;
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 0.8rem 3.2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
+            background: #5C6BC0;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 12px rgba(92, 107, 192, 0.35);
+        }
+
+        .login-btn:hover {
+            background: #4a5ab5;
+            box-shadow: 0 4px 20px rgba(92, 107, 192, 0.5);
+        }
+
+        .login-btn:active {
+            background: #3f4fa8;
+        }
+
+        @media (max-width: 768px) {
+            .logo-img {
+                width: 120px;
+            }
+
+            .logo-text {
+                font-size: 2.2rem;
+            }
+
+            .login-btn {
+                padding: 0.75rem 2.5rem;
+            }
+
+            .glow {
+                width: 280px;
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+
+    <div class="container">
+        <img src="logo.png" alt="KEY HUB Logo" class="logo-img">
+        
+        <div class="logo-text">
+            <span class="key">KEY</span> <span class="hub">HUB</span>
+        </div>
+        
+        <a href="/.auth/login/aad?post_login_redirect_uri=/dashboard.html" class="login-btn">Sign In</a>
+    </div>
+</body>
+</html>

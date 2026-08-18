@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEY HUB - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(160deg, #f0f2f5 0%, #e4eaf2 60%, #dce8f0 100%);
+            color: #2c3340;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .brand-logo {
+            width: 34px;
+            height: auto;
+            mix-blend-mode: multiply;
+            opacity: 0.75;
+            clip-path: inset(6px 0 0 0);
+        }
+
+        .brand-text {
+            font-size: 1.3rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+        }
+
+        .brand-text .key {
+            color: #2c3340;
+        }
+
+        .brand-text .hub {
+            color: #5C6BC0;
+        }
+
+        /* Contenitore dei due selettori (ambiente + azienda) nell'header,
+           per evitare che justify-content: space-between nell'header li separi
+           quando sono più di un elemento. */
+        .selectors-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Company selector */
+        .company-selector {
+            position: relative;
+        }
+
+        .company-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c3340;
+            background: #ffffff;
+            border: 1px solid rgba(92, 107, 192, 0.25);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .company-btn:hover {
+            border-color: #5C6BC0;
+            box-shadow: 0 2px 10px rgba(92, 107, 192, 0.15);
+        }
+
+        .company-btn .chevron {
+            font-size: 0.7rem;
+            color: #5C6BC0;
+            transition: transform 0.2s ease;
+        }
+
+        .company-selector.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .company-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            min-width: 220px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(44, 51, 64, 0.15);
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        .company-selector.open .company-dropdown {
+            display: block;
+        }
+
+        .company-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.1rem;
+            font-size: 0.9rem;
+            color: #2c3340;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .company-option:hover {
+            background: rgba(92, 107, 192, 0.08);
+        }
+
+        .company-option.selected {
+            color: #5C6BC0;
+            font-weight: 600;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .welcome-msg {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: #5C6BC0;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+
+        /* Central app launcher button */
+        .app-launcher {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .keyticket-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2.5rem 4rem;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(44, 51, 64, 0.08);
+            text-decoration: none;
+            color: #2c3340;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            min-width: 260px;
+        }
+
+        .keyticket-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(92, 107, 192, 0.25);
+        }
+
+        .keyticket-btn.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .keyticket-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #5C6BC0, #8e99e8);
+            color: #ffffff;
+            font-size: 1.6rem;
+        }
+
+        .keyticket-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .keyticket-sub {
+            font-size: 0.8rem;
+            color: #9199a8;
+        }
+
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            padding: 0.6rem 1.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6b7280;
+            background: transparent;
+            border: 1px solid rgba(107, 114, 128, 0.25);
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            color: #2c3340;
+            border-color: rgba(44, 51, 64, 0.4);
+            background: rgba(44, 51, 64, 0.03);
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1rem 1.25rem;
+            }
+
+            .brand-text {
+                font-size: 1.05rem;
+            }
+
+            .keyticket-btn {
+                padding: 2rem 2.5rem;
+                min-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <img src="logo.png" alt="KEY HUB" class="brand-logo">
+            <span class="brand-text"><span class="key">KEY</span> <span class="hub">HUB</span></span>
+        </div>
+
+        <div class="selectors-group">
+            <div class="company-selector" id="environmentSelector">
+                <button class="company-btn" id="environmentBtn" type="button">
+                    <span id="environmentLabel">Seleziona ambiente</span>
+                    <span class="chevron">▼</span>
+                </button>
+                <div class="company-dropdown" id="environmentDropdown">
+                    <!-- Gli ambienti vengono popolati dinamicamente -->
+                </div>
+            </div>
+
+            <div class="company-selector" id="companySelector">
+                <button class="company-btn" id="companyBtn" type="button">
+                    <span id="companyLabel">Seleziona azienda</span>
+                    <span class="chevron">▼</span>
+                </button>
+                <div class="company-dropdown" id="companyDropdown">
+                    <!-- Le aziende vengono popolate dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <p class="welcome-msg" id="welcomeMsg">Accesso riuscito!</p>
+        <p class="user-name" id="userGreeting">Caricamento...</p>
+
+        <div class="app-launcher">
+            <a href="https://keyforit.github.io/keyfor-ticket/" class="keyticket-btn" id="keyticketBtn" target="_blank" rel="noopener">
+                <span class="keyticket-icon">🎫</span>
+                <span class="keyticket-label">KEY TICKET</span>
+                <span class="keyticket-sub" id="keyticketSub">Apri l'applicazione</span>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <a href="/.auth/logout" class="logout-btn">Logout</a>
+    </footer>
+
+    <script>
+        // Elenco ambienti demo, usato solo come fallback se l'API
+        // /api/bc/environments non è ancora raggiungibile/configurata.
+        const FALLBACK_ENVIRONMENTS = [
+            { name: 'TEST', type: 'Sandbox' }
+        ];
+
+        let environments = FALLBACK_ENVIRONMENTS;
+
+        function renderEnvironments(selectedName) {
+            const dropdown = document.getElementById('environmentDropdown');
+            dropdown.innerHTML = environments.map(e => {
+                const isSelected = e.name === selectedName;
+                return '<div class="company-option' + (isSelected ? ' selected' : '') + '" data-name="' + e.name + '">' +
+                    '<span>' + e.name + '</span>' +
+                    (isSelected ? '<span>✓</span>' : '') +
+                    '</div>';
+            }).join('');
+
+            dropdown.querySelectorAll('.company-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const name = opt.getAttribute('data-name');
+                    document.getElementById('environmentLabel').textContent = name;
+                    localStorage.setItem('keyhub_environment', name);
+                    renderEnvironments(name);
+                    document.getElementById('environmentSelector').classList.remove('open');
+
+                    // Cambiando ambiente, l'azienda selezionata in precedenza
+                    // non è più valida: la azzeriamo e ricarichiamo l'elenco
+                    // aziende del nuovo ambiente prima di ricontrollare la licenza.
+                    localStorage.removeItem('keyhub_company');
+                    localStorage.removeItem('keyhub_company_id');
+                    loadCompanies().then(checkKeyTicketLicense);
+                });
+            });
+        }
+
+        document.getElementById('environmentBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('companySelector').classList.remove('open');
+            document.getElementById('environmentSelector').classList.toggle('open');
+        });
+
+        async function loadEnvironments() {
+            const savedEnvironment = localStorage.getItem('keyhub_environment');
+
+            try {
+                const response = await fetch('/api/bc/environments');
+
+                if (response.ok) {
+                    const remoteEnvironments = await response.json();
+                    if (Array.isArray(remoteEnvironments) && remoteEnvironments.length > 0) {
+                        environments = remoteEnvironments;
+                    }
+                }
+            } catch (e) {
+                // API non ancora disponibile: resta l'ambiente demo di fallback.
+                console.warn('Impossibile caricare gli ambienti da Business Central:', e);
+            }
+
+            const selected = environments.find(e => e.name === savedEnvironment) || environments[0];
+            document.getElementById('environmentLabel').textContent = selected.name;
+            localStorage.setItem('keyhub_environment', selected.name);
+            renderEnvironments(selected.name);
+        }
+
+        // Elenco aziende demo, usato solo come fallback se l'API
+        // /api/bc/companies non è ancora raggiungibile/configurata.
+        const FALLBACK_COMPANIES = [
+            { id: null, name: 'Keyfor S.r.l.' },
+            { id: null, name: 'KF BC Consultants' },
+            { id: null, name: 'Azienda Demo' }
+        ];
+
+        let companies = FALLBACK_COMPANIES;
+
+        // Contatore usato per scartare le risposte "vecchie" quando l'utente
+        // cambia ambiente rapidamente più volte: solo la risposta relativa
+        // all'ultima chiamata emessa deve aggiornare la UI.
+        let companiesRequestId = 0;
+
+        function renderCompanies(selectedName) {
+            const dropdown = document.getElementById('companyDropdown');
+            dropdown.innerHTML = companies.map(c => {
+                const isSelected = c.name === selectedName;
+                return '<div class="company-option' + (isSelected ? ' selected' : '') + '" data-id="' + (c.id || '') + '" data-name="' + c.name + '">' +
+                    '<span>' + c.name + '</span>' +
+                    (isSelected ? '<span>✓</span>' : '') +
+                    '</div>';
+            }).join('');
+
+            dropdown.querySelectorAll('.company-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const id = opt.getAttribute('data-id');
+                    const name = opt.getAttribute('data-name');
+                    document.getElementById('companyLabel').textContent = name;
+                    localStorage.setItem('keyhub_company', name);
+                    localStorage.setItem('keyhub_company_id', id || '');
+                    renderCompanies(name);
+                    document.getElementById('companySelector').classList.remove('open');
+                    checkKeyTicketLicense();
+                });
+            });
+        }
+
+        document.getElementById('companyBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('environmentSelector').classList.remove('open');
+            document.getElementById('companySelector').classList.toggle('open');
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('companySelector').classList.remove('open');
+            document.getElementById('environmentSelector').classList.remove('open');
+        });
+
+        async function loadCompanies() {
+            const requestId = ++companiesRequestId;
+            const savedCompany = localStorage.getItem('keyhub_company');
+            const environment = localStorage.getItem('keyhub_environment');
+
+            let remoteCompanies = null;
+            try {
+                const url = environment ? '/api/bc/companies?environment=' + encodeURIComponent(environment) : '/api/bc/companies';
+                const response = await fetch(url);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        remoteCompanies = data;
+                    }
+                }
+            } catch (e) {
+                // API non ancora disponibile: restano le aziende demo di fallback.
+                console.warn('Impossibile caricare le aziende da Business Central:', e);
+            }
+
+            // Se nel frattempo è partita una richiesta più recente (es. l'utente
+            // ha cambiato ambiente più volte velocemente), questa risposta è
+            // ormai "vecchia": la scartiamo per non sovrascrivere lo stato con
+            // dati non più coerenti con l'ambiente attualmente selezionato.
+            if (requestId !== companiesRequestId) {
+                return;
+            }
+
+            if (remoteCompanies) {
+                companies = remoteCompanies;
+            }
+
+            const selected = companies.find(c => c.name === savedCompany) || companies[0];
+            document.getElementById('companyLabel').textContent = selected.name;
+            localStorage.setItem('keyhub_company', selected.name);
+            localStorage.setItem('keyhub_company_id', selected.id || '');
+            renderCompanies(selected.name);
+        }
+
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/.auth/me');
+                const data = await response.json();
+                const user = data.clientPrincipal;
+
+                if (!user) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                document.getElementById('userGreeting').textContent =
+                    'Benvenuto, ' + (user.userDetails || user.userId);
+            } catch (e) {
+                document.getElementById('userGreeting').textContent = '';
+            }
+        }
+
+        loadUserInfo();
+
+        // Nome del modulo Business Central che abilita KEY TICKET.
+        // Da allineare al nome reale restituito da LicensedModules quando
+        // l'integrazione con Business Central sarà completata.
+        const KEYTICKET_MODULE_NAME = 'KEYTICKET';
+
+        async function checkKeyTicketLicense() {
+            const btn = document.getElementById('keyticketBtn');
+            const sub = document.getElementById('keyticketSub');
+
+            try {
+                const companyId = localStorage.getItem('keyhub_company_id');
+                const environment = localStorage.getItem('keyhub_environment');
+                const params = new URLSearchParams();
+                if (companyId) params.set('companyId', companyId);
+                if (environment) params.set('environment', environment);
+                const query = params.toString();
+                const url = '/api/GetModules' + (query ? '?' + query : '');
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    // L'API non è ancora collegata a Business Central (es. Managed
+                    // Identity non configurata): non blocchiamo l'utente, lasciamo
+                    // il bottone abilitato come comportamento di default.
+                    console.warn('GetModules non disponibile (status ' + response.status + '), KEY TICKET resta abilitato di default.');
+                    return;
+                }
+
+                const modules = await response.json();
+                const licensed = Array.isArray(modules) &&
+                    modules.some(m => m.name === KEYTICKET_MODULE_NAME && m.active);
+
+                if (!licensed) {
+                    btn.classList.add('disabled');
+                    sub.textContent = 'Modulo non abilitato. Contatta l\'amministratore.';
+                }
+            } catch (e) {
+                // Errore di rete o API non ancora deployata: fallback sicuro,
+                // il bottone resta abilitato per non rompere l'esperienza utente.
+                console.warn('Impossibile verificare la licenza KEY TICKET:', e);
+            }
+        }
+
+        // Sequenza di bootstrap: prima l'ambiente (da cui dipende quale BC
+        // environment interrogare), poi le aziende di quell'ambiente, infine
+        // la verifica della licenza KEY TICKET per l'azienda selezionata.
+        loadEnvironments().then(loadCompanies).then(checkKeyTicketLicense);
+    </script>
+</body>
+</html>

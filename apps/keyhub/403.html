@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEY HUB - Accesso Negato</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #f0f2f5 0%, #e4eaf2 60%, #dce8f0 100%);
+        }
+
+        .glow {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(211, 47, 47, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 160px;
+            height: auto;
+            margin-bottom: 2.5rem;
+            mix-blend-mode: multiply;
+            opacity: 0.75;
+            clip-path: inset(6px 0 0 0);
+        }
+
+        .logo-text {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-text .key {
+            color: #2c3340;
+        }
+
+        .logo-text .hub {
+            color: #5C6BC0;
+        }
+
+        .denied-msg {
+            font-size: clamp(1.3rem, 3vw, 1.7rem);
+            color: #d32f2f;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.02em;
+        }
+
+        .denied-desc {
+            font-size: 0.95rem;
+            color: #6b7280;
+            max-width: 380px;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2.4rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-home {
+            color: #ffffff;
+            background: #5C6BC0;
+            box-shadow: 0 2px 12px rgba(92, 107, 192, 0.35);
+        }
+
+        .btn-home:hover {
+            background: #4a5ab5;
+            box-shadow: 0 4px 20px rgba(92, 107, 192, 0.5);
+        }
+
+        .btn-logout {
+            color: #6b7280;
+            background: transparent;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-logout:hover {
+            color: #2c3340;
+            border-color: rgba(44, 51, 64, 0.4);
+            background: rgba(44, 51, 64, 0.03);
+        }
+
+        @media (max-width: 768px) {
+            .logo-img {
+                width: 120px;
+            }
+
+            .logo-text {
+                font-size: 2.2rem;
+            }
+
+            .glow {
+                width: 280px;
+                height: 280px;
+            }
+
+            .btn {
+                padding: 0.75rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+
+    <div class="container">
+        <img src="logo.png" alt="KEY HUB Logo" class="logo-img">
+
+        <div class="logo-text">
+            <span class="key">KEY</span> <span class="hub">HUB</span>
+        </div>
+
+        <p class="denied-msg">Accesso negato</p>
+        <p class="denied-desc">Non hai i permessi necessari per accedere a questa risorsa. Contatta l'amministratore se ritieni sia un errore.</p>
+
+        <div class="actions">
+            <a href="/" class="btn btn-home">Torna alla Home</a>
+            <a href="/.auth/logout" class="btn btn-logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
