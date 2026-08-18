@@ -6,30 +6,37 @@ import type { DebugEvent } from '@/lib/debug'
 export function DebugPanel() {
   const [events, setEvents] = useState<DebugEvent[]>([])
   const [isOpen, setIsOpen] = useState(false)
-  const { isDebugEnabled } = useAuth()
+  const { isDebugEnabled, toggleDebug } = useAuth()
 
   useEffect(() => {
     const handleDebugEvent = (e: CustomEvent<DebugEvent>) => {
       setEvents((prev) => [e.detail, ...prev])
-      setIsOpen(true) // Auto open when an event arrives
+      if (isDebugEnabled) setIsOpen(true)
     }
 
     window.addEventListener('kf_debug_event' as any, handleDebugEvent as any)
     return () => window.removeEventListener('kf_debug_event' as any, handleDebugEvent as any)
-  }, [])
-
-  if (!isDebugEnabled) return null
+  }, [isDebugEnabled])
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-      {/* Floating button when closed */}
+      {/* Floating button — always visible */}
       {!isOpen && (
         <button 
-          onClick={() => setIsOpen(true)}
-          className="flex h-10 items-center gap-2 rounded-full bg-[#1F1F1F] px-4 text-sm font-medium text-white shadow-lg hover:bg-black"
+          onClick={() => {
+            if (!isDebugEnabled) {
+              toggleDebug()
+            }
+            setIsOpen(true)
+          }}
+          className={`flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium shadow-lg transition-colors ${
+            isDebugEnabled 
+              ? 'bg-[#1F1F1F] text-white hover:bg-black' 
+              : 'bg-white text-[#605E5C] border border-[#EDEBE9] hover:bg-[#F3F2F1]'
+          }`}
         >
-          <Bug className="h-4 w-4 text-[#009B9B]" />
-          Debug API ({events.length})
+          <Bug className={`h-4 w-4 ${isDebugEnabled ? 'text-[#009B9B]' : 'text-[#A19F9D]'}`} />
+          {isDebugEnabled ? `Debug API (${events.length})` : 'Debug'}
         </button>
       )}
 
@@ -39,6 +46,14 @@ export function DebugPanel() {
           <div className="flex items-center justify-between bg-[#1F1F1F] px-4 py-3 text-white">
             <h3 className="font-semibold text-sm flex items-center gap-2"><Bug className="h-4 w-4 text-[#009B9B]" /> Debug API BC</h3>
             <div className="flex items-center gap-3">
+              <button
+                onClick={toggleDebug}
+                className={`text-xs px-2 py-0.5 rounded transition-colors ${
+                  isDebugEnabled ? 'bg-[#009B9B] text-white' : 'bg-[#605E5C] text-white'
+                }`}
+              >
+                {isDebugEnabled ? 'ON' : 'OFF'}
+              </button>
               <button onClick={() => setEvents([])} className="text-xs text-[#A19F9D] hover:text-white transition-colors">Pulisci</button>
               <button onClick={() => setIsOpen(false)} className="text-[#A19F9D] hover:text-white transition-colors">
                 <X className="h-4 w-4" />
@@ -47,7 +62,12 @@ export function DebugPanel() {
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#F3F2F1]">
-            {events.length === 0 ? (
+            {!isDebugEnabled ? (
+              <div className="h-full flex flex-col items-center justify-center text-[#605E5C] text-sm py-8">
+                <p>Debug disattivato.</p>
+                <p className="text-xs text-[#A19F9D] mt-1">Premi ON per iniziare a intercettare le chiamate API.</p>
+              </div>
+            ) : events.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-[#605E5C] text-sm py-8">
                 <p>Nessuna chiamata intercettata.</p>
                 <p className="text-xs text-[#A19F9D] mt-1">Effettua un salvataggio o naviga per vedere i log.</p>
