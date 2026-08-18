@@ -1,12 +1,38 @@
+import { emitDebugEvent } from '../components/layout/DebugPanel'
+
 export async function fetchUsersCompleteTree(email: string) {
   try {
-    // Chiamata all'API backend di Key Hub per proxyare la richiesta a BC
+    emitDebugEvent({
+      type: 'request',
+      method: 'GET',
+      url: '/api/ticket/usersCompleteTree',
+      payload: { email }
+    })
+    
     const res = await fetch('/api/ticket/usersCompleteTree?email=' + encodeURIComponent(email))
+    
     if (!res.ok) {
+      const errText = await res.text()
+      emitDebugEvent({
+        type: 'error',
+        method: 'GET',
+        url: '/api/ticket/usersCompleteTree',
+        status: res.status,
+        message: errText
+      })
       throw new Error('Errore nel recupero degli utenti')
     }
-    return await res.json()
-  } catch (error) {
+    
+    const data = await res.json()
+    emitDebugEvent({
+      type: 'response',
+      method: 'GET',
+      url: '/api/ticket/usersCompleteTree',
+      status: res.status,
+      payload: data
+    })
+    return data
+  } catch (error: any) {
     console.error('Error fetching users:', error)
     return null
   }
@@ -14,6 +40,13 @@ export async function fetchUsersCompleteTree(email: string) {
 
 export async function createTicketViaApi(ticketData: any) {
   try {
+    emitDebugEvent({
+      type: 'request',
+      method: 'POST',
+      url: '/api/ticket/create',
+      payload: ticketData
+    })
+    
     const res = await fetch('/api/ticket/create', {
       method: 'POST',
       headers: {
@@ -21,10 +54,28 @@ export async function createTicketViaApi(ticketData: any) {
       },
       body: JSON.stringify(ticketData),
     })
+    
     if (!res.ok) {
-      throw new Error('Errore nella creazione del ticket')
+      const errText = await res.text()
+      emitDebugEvent({
+        type: 'error',
+        method: 'POST',
+        url: '/api/ticket/create',
+        status: res.status,
+        message: errText
+      })
+      throw new Error(errText || 'Errore nella creazione del ticket')
     }
-    return await res.json()
+    
+    const data = await res.json()
+    emitDebugEvent({
+      type: 'response',
+      method: 'POST',
+      url: '/api/ticket/create',
+      status: res.status,
+      payload: data
+    })
+    return data
   } catch (error) {
     console.error('Error creating ticket:', error)
     throw error

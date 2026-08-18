@@ -17,6 +17,8 @@ interface AuthContextType {
   templates: RequestTemplate[]
   loading: boolean
   error: string | null
+  isDebugEnabled: boolean
+  toggleDebug: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,6 +26,8 @@ const AuthContext = createContext<AuthContextType>({
   templates: [],
   loading: true,
   error: null,
+  isDebugEnabled: false,
+  toggleDebug: () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -31,6 +35,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [templates, setTemplates] = useState<RequestTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isDebugEnabled, setIsDebugEnabled] = useState(() => {
+    return localStorage.getItem('kf_debug_enabled') === 'true'
+  })
+
+  const toggleDebug = () => {
+    setIsDebugEnabled((prev) => {
+      const next = !prev
+      localStorage.setItem('kf_debug_enabled', String(next))
+      return next
+    })
+  }
 
   useEffect(() => {
     fetch('/api/me')
@@ -68,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, templates, loading, error }}>
+    <AuthContext.Provider value={{ user, templates, loading, error, isDebugEnabled, toggleDebug }}>
       {children}
     </AuthContext.Provider>
   )

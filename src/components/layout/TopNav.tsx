@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, Bell, Settings, ArrowUp, ArrowDown } from 'lucide-react'
+import { ChevronLeft, Bell, Settings, ArrowUp, ArrowDown, Bug } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { UserProfileMenu } from './UserProfileMenu'
 import { useNotifications } from '@/lib/notifications'
@@ -21,7 +21,7 @@ export function TopNav() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
   const { visibleColumns, groupingMode, groupingYear, columnOrder } = useTicketListCustomization()
-  const { user } = useAuth()
+  const { user, isDebugEnabled, toggleDebug } = useAuth()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const currentPath = `${location.pathname}${location.search}`
   const statusParam = new URLSearchParams(location.search).get('status')
@@ -80,6 +80,14 @@ export function TopNav() {
         Key Ticket
       </button>
       <div className="ml-auto flex items-center gap-2">
+        <button
+          type="button"
+          title="Debug Mode"
+          onClick={toggleDebug}
+          className={`relative flex h-8 w-8 items-center justify-center rounded-md transition-colors ${isDebugEnabled ? 'bg-[#009B9B] text-white hover:bg-[#007575]' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
+        >
+          <Bug className="h-4 w-4" />
+        </button>
         <button
           type="button"
           title="Notifiche"
